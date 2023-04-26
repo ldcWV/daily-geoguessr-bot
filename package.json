@@ -1,0 +1,32 @@
+{
+  "name": "daily-geoguessr-bot",
+  "version": "1.0.0",
+  "description": "GeoGuessr Daily Challenge Bot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sh-mug/daily-geoguessr-bot.git"
+  },
+  "keywords": [
+    "geoguessr",
+    "discord",
+    "bot"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "sh-mug",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sh-mug/daily-geoguessr-bot/issues"
+  },
+  "homepage": "https://github.com/sh-mug/daily-geoguessr-bot/blob/main/README.md",
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3",
+    "node-cron": "^3.0.2",
+    "puppeteer": "^19.11.0",
+    "sharp": "^0.32.0"
+  }
+}
