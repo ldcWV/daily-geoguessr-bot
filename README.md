@@ -1,7 +1,9 @@
 # GeoGuessr Daily Challenge Bot
 
-This bot generates a GeoGuessr Challenge at a set time each day and posts the results to a designated Discord channel.
+This bot generates a GeoGuessr challenge at a regular time each day and posts it to a specified Discord channel. Additionally, it also posts the previous day's challenge ranking to the same channel.
 By default, the challenge has ACW, 1 minute, and no move settings, but these can be customized as needed.
+
+![Screenshot of the bot in operation](./screenshot.PNG)
 
 ## Requirements
 
