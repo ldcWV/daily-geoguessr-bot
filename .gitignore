@@ -1,3 +1,6 @@
+# temporary images
+*.png
+
 # Logs
 logs
 *.log
