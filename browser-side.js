@@ -10,7 +10,6 @@ const signinToGeoGuessr = async () => {
     });
     const page = await browser.newPage();
     await page.setViewport({ width: 800, height: 600 });
-    await page.setDefaultNavigationTimeout(10000);
 
     // sign in
     const signinUrl = 'https://www.geoguessr.com/signin';
