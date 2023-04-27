@@ -37,7 +37,7 @@ client.on('ready', async () => {
         // post challenge result
         if (inviteUrl !== "") {
             const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
-            channel.send({ files: [screenShotFilename] })
+            channel.send({ content: 'GGs!', files: [screenShotFilename] })
         }
 
         // post new challenge

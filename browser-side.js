@@ -30,8 +30,8 @@ const signinToGeoGuessr = async () => {
 };
 
 const takeResultScreenshot = async (page, chalUrl) => {
-    const imageWidth = 1200, imageHeight = 1600;
-    const trimWidth = 56;
+    const imageWidth = 1200, imageHeight = 1730;
+    const trimTop = 850, trimRight = 1130;
 
     // take screenshot
     await page.setViewport({ width: imageWidth, height: imageHeight });
@@ -42,7 +42,7 @@ const takeResultScreenshot = async (page, chalUrl) => {
     // trim screenshot
     const trimmedFilename = 'trimmed.png';
     await sharp(resultFilename)
-        .extract({ left: 0, top: 0, width: imageWidth - trimWidth, height: imageHeight })
+        .extract({ left: 0, top: trimTop, width: trimRight, height: imageHeight - trimTop })
         .toFile(trimmedFilename);
 
     return trimmedFilename;
