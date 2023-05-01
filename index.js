@@ -34,6 +34,8 @@ client.on('ready', async () => {
     let inviteUrl = process.env.LAST_CHAL_URL;
 
     cron.schedule('0 10 * * *', async () => {
+        client.login(process.env.DISCORD_TOKEN);
+
         // post challenge result
         if (inviteUrl !== "") {
             const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
