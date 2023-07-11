@@ -21,6 +21,11 @@ const signinToGeoGuessr = async () => {
     const passwordSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundGroupEvents__FqBS3 > div.version4_layout__KcIcs.version4_noSideTray__ayVjE > div.version4_content__oaYfe > main > div > div > form > div > div:nth-child(2) > div:nth-child(2) > input';
     await page.type(passwordSelector, process.env.PASSWORD);
 
+    const acceptCookieSelector = '#onetrust-accept-btn-handler';
+    if (await page.$(acceptCookieSelector) !== null) {
+        await page.click(acceptCookieSelector);
+    }
+
     const signinButtonSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundGroupEvents__FqBS3 > div.version4_layout__KcIcs.version4_noSideTray__ayVjE > div.version4_content__oaYfe > main > div > div > form > div > div.auth_forgotAndLoginButtonWrapper__PiLQi > div.form-field_formField__beWhf.form-field_typeActions__tMY1O > div > button > div';
     await page.click(signinButtonSelector);
     await page.waitForNavigation();
@@ -36,6 +41,9 @@ const takeResultScreenshot = async (page, chalUrl) => {
     await page.setViewport({ width: imageWidth, height: imageHeight });
     const resultUrl = chalUrl.replace('challenge', 'results');
     await page.goto(resultUrl);
+
+    const resultSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div.results_table__FHKQm';
+    await page.waitForSelector(resultSelector);
     await page.screenshot({ path: resultFilename });
 
     // trim screenshot
