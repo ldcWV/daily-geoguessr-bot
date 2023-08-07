@@ -33,7 +33,7 @@ client.on('ready', async () => {
     const channel = await client.channels.cache.get(process.env.CHANNEL_ID);
     let inviteUrl = process.env.LAST_CHAL_URL;
 
-    cron.schedule('0 10 * * *', async () => {
+    cron.schedule(process.env.POST_TIME, async () => {
         client.login(process.env.DISCORD_TOKEN);
 
         // post challenge result
