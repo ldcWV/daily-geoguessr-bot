@@ -46,6 +46,7 @@ npm start
 - `PASSWORD` - GeoGuessr account password
 - `DISCORD_TOKEN` - Discord bot token
 - `CHANNEL_ID` - ID of the Discord channel to post the daily challenge
+- `POST_TIME` - Scheduled time for posting challenges in cron notation; for example, `"0 8 * * *"`
 - `LAST_CHAL_URL` - URL of the last challenge posted (optional; used to take a result screenshot)
 
 ## Contributing
