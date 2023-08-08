@@ -30,7 +30,8 @@ const client = new Client({
 client.login(process.env.DISCORD_TOKEN);
 client.on('ready', async () => {
     const page = await signinToGeoGuessr();
-    const channel = await client.channels.cache.get(process.env.CHANNEL_ID);
+    const channel_ids = process.env.CHANNEL_ID.split(',');
+    const channels = channel_ids.map(id => client.channels.cache.get(id));
     let inviteUrl = process.env.LAST_CHAL_URL;
 
     cron.schedule(process.env.POST_TIME, async () => {
@@ -39,7 +40,9 @@ client.on('ready', async () => {
         // post challenge result
         if (inviteUrl !== "") {
             const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
-            channel.send({ content: 'GGs!', files: [screenShotFilename] })
+            for (const channel of channels) {
+                await channel.send({ content: 'GGs!', files: [screenShotFilename] });
+            }
         }
 
         // post new challenge
@@ -49,7 +52,9 @@ client.on('ready', async () => {
         const message = [today, description, inviteUrl].join('\n');
         console.log(inviteUrl);
 
-        await channel.send(message);
+        for (const channel of channels) {
+            await channel.send(message);
+        }
         await client.destroy();
     });
 });
