@@ -11,7 +11,7 @@ const acw = {
     description: 'A Community World'
 };
 const challengeSettings = {
-    time: 60,
+    time: 120,
     move: false,
     pan: true,
     zoom: true
@@ -34,27 +34,27 @@ client.on('ready', async () => {
     const channels = channel_ids.map(id => client.channels.cache.get(id));
     let inviteUrl = process.env.LAST_CHAL_URL;
 
-    cron.schedule(process.env.POST_TIME, async () => {
-        client.login(process.env.DISCORD_TOKEN);
+    // cron.schedule(process.env.POST_TIME, async () => {
+    client.login(process.env.DISCORD_TOKEN);
 
-        // post challenge result
-        if (inviteUrl !== "") {
-            const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
-            for (const channel of channels) {
-                await channel.send({ content: 'GGs!', files: [screenShotFilename] });
-            }
-        }
-
-        // post new challenge
-        const today = `${new Date().toLocaleDateString()} daily challenge`;
-        const description = createDescription(acw, challengeSettings);
-        inviteUrl = await createChallenge(page, acw.url, challengeSettings);
-        const message = [today, description, inviteUrl].join('\n');
-        console.log(inviteUrl);
-
+    // post challenge result
+    if (inviteUrl !== "") {
+        const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
         for (const channel of channels) {
-            await channel.send(message);
+            await channel.send({ content: 'GGs!', files: [screenShotFilename] });
         }
-        await client.destroy();
-    });
+    }
+
+    // post new challenge
+    const today = `${new Date().toLocaleDateString()} daily challenge`;
+    const description = createDescription(acw, challengeSettings);
+    inviteUrl = await createChallenge(page, acw.url, challengeSettings);
+    const message = [today, description, inviteUrl].join('\n');
+    console.log(inviteUrl);
+
+    for (const channel of channels) {
+        await channel.send(message);
+    }
+    await client.destroy();
+    // });
 });
