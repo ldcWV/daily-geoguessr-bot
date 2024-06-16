@@ -1,8 +1,8 @@
 const dotenv = require('dotenv')
 const { Client, GatewayIntentBits } = require('discord.js')
-const cron = require('node-cron')
+const fs = require('node:fs');
 
-const { signinToGeoGuessr, createChallenge, createDescription, takeResultScreenshot } = require('./browser-side')
+const { makePage, signinToGeoGuessr, createChallenge, createDescription, takeResultScreenshot } = require('./browser-side')
 
 dotenv.config()
 
@@ -11,7 +11,7 @@ const acw = {
     description: 'A Community World'
 };
 const challengeSettings = {
-    time: 60,
+    time: 120,
     move: false,
     pan: true,
     zoom: true
@@ -29,27 +29,41 @@ const client = new Client({
 
 client.login(process.env.DISCORD_TOKEN);
 client.on('ready', async () => {
-    const page = await signinToGeoGuessr();
-    const channel = await client.channels.cache.get(process.env.CHANNEL_ID);
-    let inviteUrl = process.env.LAST_CHAL_URL;
+    let page = await makePage();
+    await signinToGeoGuessr(page);
+    const channel_ids = process.env.CHANNEL_ID.split(',');
+    const channels = channel_ids.map(id => client.channels.cache.get(id));
 
-    cron.schedule(process.env.POST_TIME, async () => {
-        client.login(process.env.DISCORD_TOKEN);
-
-        // post challenge result
-        if (inviteUrl !== "") {
+    let inviteUrl = fs.readFileSync('last_chal_url.txt', 'utf8')
+    if (inviteUrl !== "") {
+        try {
             const screenShotFilename = await takeResultScreenshot(page, inviteUrl);
-            channel.send({ content: 'GGs!', files: [screenShotFilename] })
+            for (const channel of channels) {
+                await channel.send({
+                    content: 'GGs!',
+                    files: [screenShotFilename]
+                });
+            }
+        } catch (error) {
+            console.log("Could not take screenshot of results.");
+            console.log("This can happen if the challenge has not been completed by the main user.")
         }
+    }
+    
+    client.login(process.env.DISCORD_TOKEN);
 
-        // post new challenge
-        const today = `${new Date().toLocaleDateString()} daily challenge`;
-        const description = createDescription(acw, challengeSettings);
-        inviteUrl = await createChallenge(page, acw.url, challengeSettings);
-        const message = [today, description, inviteUrl].join('\n');
-        console.log(inviteUrl);
+    // post new challenge
+    const today = `**${new Date().toLocaleDateString()} DAILY CHALLENGE**`;
+    const description = createDescription(acw, challengeSettings);
+    inviteUrl = await createChallenge(page, acw.url, challengeSettings);
+    const message = [today, description, inviteUrl].join('\n');
 
+    // save url
+    fs.writeFileSync('last_chal_url.txt', inviteUrl);
+
+    for (const channel of channels) {
         await channel.send(message);
-        await client.destroy();
-    });
+    }
+    await client.destroy();
+    process.exit();
 });

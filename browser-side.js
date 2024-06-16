@@ -1,48 +1,52 @@
-const puppeteer = require('puppeteer');
 const sharp = require('sharp');
+const puppeteer = require('puppeteer');
 
 const resultFilename = 'result.png';
 
-const signinToGeoGuessr = async () => {
+const makePage = async () => {
     const browser = await puppeteer.launch({
         headless: 'new',
-        executablePath: '/usr/bin/chromium-browser'
+        // headless: false,
     });
     const page = await browser.newPage();
     await page.setViewport({ width: 800, height: 600 });
+    page.setDefaultNavigationTimeout(200000);
 
+    return page;
+};
+
+const signinToGeoGuessr = async (page) => {
     // sign in
     const signinUrl = 'https://www.geoguessr.com/signin';
     await page.goto(signinUrl);
 
-    const emailSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundGroupEvents__FqBS3 > div.version4_layout__KcIcs.version4_noSideTray__ayVjE > div.version4_content__oaYfe > main > div > div > form > div > div:nth-child(1) > div:nth-child(2) > input';
-    await page.type(emailSelector, process.env.EMAIL);
-
-    const passwordSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundGroupEvents__FqBS3 > div.version4_layout__KcIcs.version4_noSideTray__ayVjE > div.version4_content__oaYfe > main > div > div > form > div > div:nth-child(2) > div:nth-child(2) > input';
-    await page.type(passwordSelector, process.env.PASSWORD);
-
-    const acceptCookieSelector = '#onetrust-accept-btn-handler';
+    // accept cookies
+    const acceptCookieSelector = '#accept-choices';
     if (await page.$(acceptCookieSelector) !== null) {
         await page.click(acceptCookieSelector);
     }
 
-    const signinButtonSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundGroupEvents__FqBS3 > div.version4_layout__KcIcs.version4_noSideTray__ayVjE > div.version4_content__oaYfe > main > div > div > form > div > div.auth_forgotAndLoginButtonWrapper__PiLQi > div.form-field_formField__beWhf.form-field_typeActions__tMY1O > div > button > div';
+    const emailSelector = "#__next > div > div.version4_layout__XumXk.version4_noSideTray__OFtLJ > div.version4_content__ukQvy > main > div > div > form > div > div:nth-child(1) > div:nth-child(2) > input"
+    await page.type(emailSelector, process.env.EMAIL);
+
+    const passwordSelector = "#__next > div > div.version4_layout__XumXk.version4_noSideTray__OFtLJ > div.version4_content__ukQvy > main > div > div > form > div > div:nth-child(2) > div:nth-child(2) > input"
+    await page.type(passwordSelector, process.env.PASSWORD);
+
+    const signinButtonSelector = "#__next > div > div.version4_layout__XumXk.version4_noSideTray__OFtLJ > div.version4_content__ukQvy > main > div > div > form > div > div.auth_forgotAndLoginButtonWrapper__8U8UF > div.form-field_formField__8jNau.form-field_typeActions__V8Omm > div > button"
     await page.click(signinButtonSelector);
     await page.waitForNavigation();
-
-    return page;
 };
 
 const takeResultScreenshot = async (page, chalUrl) => {
     const imageWidth = 1200, imageHeight = 1730;
     const trimTop = 850, trimRight = 1130;
 
-    // take screenshot
     await page.setViewport({ width: imageWidth, height: imageHeight });
     const resultUrl = chalUrl.replace('challenge', 'results');
     await page.goto(resultUrl);
 
-    const resultSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div.results_table__FHKQm';
+    // take screenshot
+    const resultSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div.results_table__Z7k_U"
     await page.waitForSelector(resultSelector);
     await page.screenshot({ path: resultFilename });
 
@@ -60,49 +64,50 @@ const createChallenge = async (page, mapUrl, chalSettings) => {
     await page.goto(mapUrl);
 
     // select 'Challenge' mode
-    const chalModeSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div:nth-child(2) > div:nth-child(2) > label > div.radio-box_illustration___Yw_M';
+    const chalModeSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div:nth-child(2) > div:nth-child(2) > label"
     await page.click(chalModeSelector);
 
     // uncheck 'Default settings'
-    const settingsSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.section_sectionMedium__yXgE6 > div > div.game-settings_default__DIBgs > div:nth-child(2) > input';
+    const settingsSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div > div:nth-child(2) > input"
     const settingsIsChecked = await page.$eval(settingsSelector, el => el.checked);
     if (settingsIsChecked) {
         await page.click(settingsSelector);
     }
 
     // set time (TODO: fix this)
-    const timeSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.section_sectionMedium__yXgE6 > div > div.game-options_optionGroup__qNKx1 > div > div:nth-child(1) > div > label > div.game-options_optionInput__TAqdI > div > div';
-    await page.waitForSelector(timeSelector);
-    const timeSlider = await page.$(timeSelector);
-    await page.evaluate((slider, value) => {
-        slider.ariaValueNow = String(value);
-    }, timeSlider, chalSettings.time);
+    // console.log("setting time")
+    // const timeSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div.game-options_optionGroup__eOMZ3 > div > div:nth-child(1) > div > label > div.game-options_optionInput__paPBZ > div > div > div.styles_handle__h9ytQ"
+    // await page.waitForSelector(timeSelector);
+    // const timeSlider = await page.$(timeSelector);
+    // await page.evaluate((slider, value) => {
+    //     slider.ariaValueNow = String(value);
+    // }, timeSlider, chalSettings.time);
 
     // set move, pan, and zoom
-    const moveSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.section_sectionMedium__yXgE6 > div > div.game-options_optionGroup__qNKx1 > div > div.game-options_wrappingGroup__u3pGi > label:nth-child(1) > div.game-options_optionInput__TAqdI > input';
+    const moveSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div.game-options_optionGroup__eOMZ3 > div > div.game-options_wrappingGroup__iXw_2 > label:nth-child(1) > div.game-options_optionInput__paPBZ > input"
     const moveIsChecked = await page.$eval(moveSelector, el => el.checked);
     if (moveIsChecked !== chalSettings.move) {
         await page.click(moveSelector);
     }
 
-    const panSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.section_sectionMedium__yXgE6 > div > div.game-options_optionGroup__qNKx1 > div > div.game-options_wrappingGroup__u3pGi > label:nth-child(2) > div.game-options_optionInput__TAqdI > input';
+    const panSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div.game-options_optionGroup__eOMZ3 > div > div.game-options_wrappingGroup__iXw_2 > label:nth-child(2) > div.game-options_optionInput__paPBZ > input"
     const panIsChecked = await page.$eval(panSelector, el => el.checked);
     if (panIsChecked !== chalSettings.pan) {
         await page.click(panSelector);
     }
 
-    const zoomSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.section_sectionMedium__yXgE6 > div > div.game-options_optionGroup__qNKx1 > div > div.game-options_wrappingGroup__u3pGi > label:nth-child(3) > div.game-options_optionInput__TAqdI > input';
+    const zoomSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div.game-options_optionGroup__eOMZ3 > div > div.game-options_wrappingGroup__iXw_2 > label:nth-child(3) > div.game-options_optionInput__paPBZ > input"
     const zoomIsChecked = await page.$eval(zoomSelector, el => el.checked);
     if (zoomIsChecked !== chalSettings.zoom) {
         await page.click(zoomSelector);
     }
 
     // invite friends
-    const inviteSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > div.start-challenge-game_body__sWqnL > button > div';
+    const inviteSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.start-challenge-game_body__u5scD > div > div > button"
     await page.click(inviteSelector);
 
     // copy invite URL
-    const inviteUrlSelector = '#__next > div.background_wrapper__OlrxG.background_backgroundClassic__ySr_Z > div.version4_layout__KcIcs > div.version4_content__oaYfe > main > div > div > div > div > section > article > div > span > input';
+    const inviteUrlSelector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > section > article > div > span > input"
     await page.waitForSelector(inviteUrlSelector);
     const inviteUrl = await page.$eval(inviteUrlSelector, el => el.value);
 
@@ -126,6 +131,7 @@ const createDescription = (map, chalSettings) => {
 };
 
 module.exports = {
+    makePage,
     signinToGeoGuessr,
     takeResultScreenshot,
     createChallenge,
