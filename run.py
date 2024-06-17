@@ -10,6 +10,6 @@ image = (
     .pip_install("pillow")
 )
 
-@app.function(schedule=modal.Cron("0 0 * * *"), image=image)
+@app.function(schedule=modal.Cron("0 1 * * *"), image=image)
 def run():
     run_daily_challenge()
