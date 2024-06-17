@@ -4,10 +4,10 @@ import pyppeteer
 from PIL import Image
 
 async def sign_in_to_geoguessr(email, password):
-    browser = await pyppeteer.launch({
-        # "headless": True
-        "headless": False
-    })
+    browser = await pyppeteer.launch(
+        headless=True,
+        args=['--no-sandbox']
+    )
     page = await browser.newPage()
     await page.setViewport({
         "width": 800,
@@ -51,7 +51,7 @@ async def take_results_screenshot(page, results_url):
 
     # Take screenshot
     result_selector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div.results_table__Z7k_U"
-    await page.waitForSelector(result_selector, {'timeout': 10000 })
+    await page.waitForSelector(result_selector, {'timeout': 30000 })
     await page.screenshot({
         "path": "results.png"
     })
@@ -72,7 +72,7 @@ async def create_challenge(page, map_url):
     await page.click(challenge_mode_selector)
 
     # Uncheck 'default settings'
-    settings_selector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div:nth-child(2) > div:nth-child(2) > label"
+    settings_selector = "#__next > div.background_wrapper__BE727.background_backgroundClassic__Sjpbl > div.version4_layout__XumXk > div.version4_content__ukQvy > main > div > div > div > div > div.section_sectionMedium__wbXjF > div > div > div:nth-child(2) > input"
     if await page.querySelectorEval(settings_selector, "el => el.checked"):
         await page.click(settings_selector)
 
