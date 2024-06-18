@@ -44,6 +44,7 @@ image = (
     .pip_install("pyppeteer")
     .pip_install("discord-py-api")
     .pip_install("pillow")
+    .pip_install("openai")
 )
 
 @app.function(schedule=modal.Cron("0 1 * * *"), image=image)
