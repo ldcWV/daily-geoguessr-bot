@@ -3,7 +3,9 @@ Each day, this bot posts a daily Geoguessr challenge to a Discord channel and ga
 
 The script gets deployed as a [Modal](https://modal.com) cron job. **No manual server setup outside this repo is required.**
 
-![Screenshot of the bot in operation](./screenshot.png)
+
+![Screenshot of the bot in operation pt 1](./screenshot1.png)
+![Screenshot of the bot in operation pt 2](./screenshot2.png)
 
 ## Prerequisites
 
