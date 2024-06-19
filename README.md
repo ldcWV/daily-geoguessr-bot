@@ -1,7 +1,7 @@
 # GeoGuessr Daily Challenge Bot
 Each day, this bot posts a daily Geoguessr challenge to a Discord channel and gathers results from the previous day. It uses GPT4 to generate an analysis of the previous day's results and isn't afraid to trash talk people who don't perform well.
 
-The script gets deployed as a [Modal](https://modal.com) cron job. No manual server setup outside this repo is required.
+The script gets deployed as a [Modal](https://modal.com) cron job. **No manual server setup outside this repo is required.**
 
 ![Screenshot of the bot in operation](./screenshot.png)
 
