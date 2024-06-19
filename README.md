@@ -1,17 +1,17 @@
 # GeoGuessr Daily Challenge Bot
-Each day, this bot posts a daily Geoguessr challenge to a Discord channel and gathers results from the previous day. It uses GPT4 to generate an analysis of the previous day's results and isn't afraid to trash talk people who don't perform well.
+Each day, this bot posts a Geoguessr challenge to a Discord channel and gathers results from the previous day. It uses GPT-4 to generate an analysis of the previous day's results and isn't afraid to trash talk people who don't perform well.
 
-The script gets deployed as a [Modal](https://modal.com) cron job. **No manual server setup outside this repo is required.**
+Upon running a single command, the script gets deployed automatically as a [Modal](https://modal.com) cron job. **No manual server setup outside this repo is required.**
 
 
-![Screenshot of the bot in operation pt 1](./screenshot1.png)
-![Screenshot of the bot in operation pt 2](./screenshot2.png)
+![Screenshot of the bot in operation, pt. 1](./screenshot1.png)
+![Screenshot of the bot in operation, pt. 2](./screenshot2.png)
 
 ## Prerequisites
 
 - Discord bot account (create an app with a bot at https://discord.com/developers/applications)
 - GeoGuessr account with a subscription that lets you create challenges
-- OpenAI account with credits to access gpt4-turbo
+- OpenAI account with access to the Assistants API
 - Modal account (https://modal.com/)
 
 ## Installation
@@ -39,7 +39,7 @@ The script gets deployed as a [Modal](https://modal.com) cron job. **No manual s
 modal deploy --name geoguessr_bot ./run.py
 ```
 
-Note: you will need to create and connect your Modal account for this to work.
+Note: you will need to create and connect a Modal account for this to work.
 
 ## Contributing
 
@@ -51,5 +51,5 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 
 ## Acknowledgements
 
-- I used [this repo](https://github.com/sh-mug/daily-geoguessr-bot) as a starting point.
+- I used [sh-mug's repo](https://github.com/sh-mug/daily-geoguessr-bot) as a starting point.
 - Thanks to everyone in Bing Bong's Bedroom for testing!

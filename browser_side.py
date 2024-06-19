@@ -22,6 +22,8 @@ def get_results(session, challenge_token):
     game_token = session.post(f"https://www.geoguessr.com/api/v3/challenges/{challenge_token}").json()['token']
 
     # Play the game (time out every round) until it's over
+    # This is because the API doesn't show you results unless you've played the challenge
+    # If the user has already played the challenge, this loop won't do anything
     for i in range(100):
         session.get(f"https://www.geoguessr.com/api/v3/games/{game_token}?client=web")
         resp = session.post(f"https://www.geoguessr.com/api/v3/games/{game_token}", json={
@@ -33,11 +35,12 @@ def get_results(session, challenge_token):
         if resp.status_code != 200:
             break
 
+    # Retrieve the scoreboard
     scoreboard = session.get(f"https://www.geoguessr.com/api/v3/results/highscores/{challenge_token}?friends=false&limit=26&minRounds=5")
     assert scoreboard.status_code == 200
     scoreboard = scoreboard.json()
 
-    # Remove players that timed out all rounds
+    # Filter out players that timed out every round, and filter out irrelevant information from the scoreboard
     results = {}
     results['roundCount'] = scoreboard['items'][0]['game']['roundCount']
     results['timeLimit'] = scoreboard['items'][0]['game']['timeLimit']
