@@ -50,4 +50,4 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 ## Acknowledgements
 
 - I used [this repo](https://github.com/sh-mug/daily-geoguessr-bot) as a starting point.
-- Thanks to everyone in Bing Bong's Bedroom for helping with testing!
+- Thanks to everyone in Bing Bong's Bedroom for testing!
