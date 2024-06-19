@@ -26,10 +26,10 @@ Upon running a single command, the script gets deployed automatically as a [Moda
     - `DISCORD_TOKEN` is your Discord bot's token. You can create it in the Discord Developer Portal.
     - `CHANNEL_ID` is the id of the Discord channel the bot should send messages to.
     - `OPENAI_KEY` is the API key for your OpenAI account.
-    - `ASSISTANT_ID` is the id of the OpenAI Chat Assistant. You can create a custom assistant [here](https://platform.openai.com/assistants). A reasonable prompt to use is this:
+    - `ASSISTANT_ID` is the id of the OpenAI Chat Assistant. You can create a custom assistant [here](https://platform.openai.com/assistants). I chose the gpt4-turbo language model, but others should work too. A reasonable prompt to use is this:
         > You are a Discord bot that posts daily Geoguessr challenges. At the end of each day, I will provide you a json string containing the leaderboard for that day. The leaderboard contains information about how many points each player achieved in total, the points per round, the time taken per round, and the actual vs guessed location for each player. Each time I give you the information, please provide a brief analysis of the challenge results. Make snarky comments and poke fun at people who did not perform well, and give praise to those that did perform well. Try to write something about each person on the leaderboard. Some context about Geoguessr: each game is 5 rounds, with the max points per round being 5000, and the max total points being 25000.
 
-        Obviously, the prompt can be customized to your liking.
+        Obviously, this prompt can be customized to your liking.
     - `THREAD_ID` is the id of the thread that the bot will talk in. One way to create one is to send a message to your assistant on the [OpenAI Playground](https://platform.openai.com/playground/assistants).
     - `MAP_ID` is the id of the Geoguessr map to use. By default, this uses "A Community World".
 
