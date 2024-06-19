@@ -21,7 +21,7 @@ The script gets deployed as a [Modal](https://modal.com) cron job. **No manual s
 - Rename `config_example.py` to `config.py`.
 - Add your tokens and API keys to `config.py`.
     - `NCFA_TOKEN` is your Geoguessr login credentials. See [here](https://github.com/SafwanSipai/geo-insight?tab=readme-ov-file#getting-your-_ncfa-cookie) for instructions to obtain.
-    - `DISCORD_TOKEN` is the your Discord bot's token. You can create it in the Discord Developer Portal.
+    - `DISCORD_TOKEN` is your Discord bot's token. You can create it in the Discord Developer Portal.
     - `CHANNEL_ID` is the id of the Discord channel the bot should send messages to.
     - `OPENAI_KEY` is the API key for your OpenAI account.
     - `ASSISTANT_ID` is the id of the OpenAI Chat Assistant. You can create a custom assistant [here](https://platform.openai.com/assistants). A reasonable prompt to use is this:
