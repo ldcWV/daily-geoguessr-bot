@@ -19,19 +19,26 @@ async def on_ready():
         session = make_session(NCFA_TOKEN)
         
         # First figure out what the last challenge id was by looking through message history
+        # In the meantime also gather chat logs
+        chat_logs = []
         last_challenge_id = None
         async for message in channel.history(limit=1000):
-            if message.author == client.user:
+            if message.author == client.user: # If message was sent by the bot
                 if message.embeds is None or len(message.embeds) == 0:
                     continue
                 if message.embeds[0].title is None or not "New Daily Challenge" in message.embeds[0].title:
                     continue
                 last_challenge_id = message.embeds[0].url.split("/")[-1]
                 break
+            else: # If message was sent by a user
+                username = message.author.name
+                chat_logs.append(f"{username}: {message.content}")
+        chat_logs.reverse()
 
         # Post results of last challenge
         if last_challenge_id:
             results = get_results(session, last_challenge_id)
+            results['chatLogs'] = chat_logs
 
             # Get ChatGPT analysis of results
             openai_client = OpenAI()
@@ -41,7 +48,7 @@ async def on_ready():
             openai_client.beta.threads.messages.create(
                 thread_id=thread.id,
                 role="user",
-                content=json.dumps(results, indent=4)
+                content=json.dumps(results)
             )
 
             run = openai_client.beta.threads.runs.create_and_poll(
@@ -85,8 +92,11 @@ async def on_ready():
         )
         embed.set_thumbnail(url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZus44GbLGe3ivveQmuMkkGtOVF8m0IEvyoQ&s")
         await channel.send(embed=embed)
+
+        session.close()
     except:
         await channel.send(f"An error occurred, WTF fix it @WhaleVomit ```{traceback.format_exc()}```")
+        print(traceback.format_exc())
 
     await client.close()
 
