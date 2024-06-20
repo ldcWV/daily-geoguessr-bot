@@ -32,7 +32,7 @@ Upon running a single command, the script gets deployed automatically as a [Moda
 
         Obviously, this prompt can be customized to your liking.
     - `THREAD_ID` is the id of the thread that the bot will talk in. One way to create one is to send a message to your assistant on the [OpenAI Playground](https://platform.openai.com/playground/assistants).
-    - `MAP_ID` is the id of the Geoguessr map to use. By default, this uses "A Community World".
+    - `MAP_ID` is the id of the Geoguessr map to use. By default, this uses [A Community World](https://www.geoguessr.com/maps/62a44b22040f04bd36e8a914).
 
 ## Usage
 
