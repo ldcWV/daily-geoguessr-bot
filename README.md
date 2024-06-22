@@ -21,6 +21,10 @@ Upon running a single command, the script gets deployed automatically as a [Moda
     git clone https://github.com/ldcWV/daily-geoguessr-bot.git
     ```
 - [Install Modal and connect your account.](https://modal.com/docs/guide)
+- Install other dependencies.
+    ```
+    pip install discord.py openai requests
+    ```
 - Rename `config_example.py` to `config.py`.
 - Add your tokens and API keys to `config.py`.
     - `NCFA_TOKEN` is your Geoguessr login credentials. See [here](https://github.com/SafwanSipai/geo-insight?tab=readme-ov-file#getting-your-_ncfa-cookie) for instructions to obtain.
