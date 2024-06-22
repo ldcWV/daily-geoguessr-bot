@@ -54,6 +54,7 @@ def get_results(session, challenge_token):
         if not timed_out_all:
             pl = {}
             pl['playerName'] = player['playerName']
+            pl['userId'] = player['userId']
             pl['totalScore'] = player['totalScore']
             pl['rounds'] = []
             for i in range(results['roundCount']):

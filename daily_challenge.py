@@ -65,7 +65,7 @@ async def on_ready():
             # Sort players by score to be displayed in the Discord message
             players = []
             for player in results['players']:
-                players.append((player['totalScore'], player['playerName']))
+                players.append((player['totalScore'], player['playerName'], player['userId']))
             players.sort(reverse=True)
             
             # Send analysis to channel in blocks of 2000 characters. Attach embed in the last block.
@@ -79,6 +79,65 @@ async def on_ready():
             )
             embed.add_field(name="User", value="\n".join([p[1] for p in players]), inline=True)
             embed.add_field(name="Score", value="\n".join([str(p[0]) for p in players]), inline=True)
+            await channel.send(embed=embed)
+        
+        # Tally up GeoPoints
+        if modal_volume is not None:
+            embed = discord.Embed(
+                title="GeoPoint Changes",
+                color=7076607
+            )
+
+            fname = f"/root/geopoints/{CHANNEL_ID}.json"
+            points_dict = {}
+            if os.path.exists(fname):
+                points_dict = json.load(open(fname))
+
+            embed_users = []
+            embed_values = []
+            for rank, (_, player_name, player_id) in enumerate(players):
+                # Calculate delta
+                if rank == 0:
+                    delta = 10
+                elif rank == 1:
+                    delta = 6
+                elif rank == 2:
+                    delta = 3
+                else:
+                    delta = 1
+                
+                # Read old geopoint value
+                old_points = points_dict.get(player_id, ("", 0))[1]
+                new_points = old_points + delta
+
+                # Add to embed
+                embed_users.append(player_name)
+                embed_values.append(f"{new_points} (+{delta})")
+
+                # Write new geopoint value
+                points_dict[player_id] = (player_name, new_points)
+            
+            # Write to file
+            json.dump(points_dict, open(fname, "w"))
+            modal_volume.commit()
+
+            # Send embed
+            embed.add_field(name="User", value="\n".join(embed_users), inline=True)
+            embed.add_field(name="GeoPoints", value="\n".join(embed_values), inline=True)
+            await channel.send(embed=embed)
+
+            # Send GeoPoints leaderboard
+            embed = discord.Embed(
+                title="GeoPoint Top 20",
+                color=16776299
+            )
+            leaderboard = []
+            for _, (player_name, points) in points_dict.items():
+                leaderboard.append((points, player_name))
+            leaderboard.sort(reverse=True)
+            leaderboard = leaderboard[:20]
+            embed.add_field(name="User", value="\n".join([p[1] for p in leaderboard]), inline=True)
+            embed.add_field(name="GeoPoints", value="\n".join([str(p[0]) for p in leaderboard]), inline=True)
             await channel.send(embed=embed)
 
         # Create new challenge
@@ -100,7 +159,9 @@ async def on_ready():
 
     await client.close()
 
-def run_daily_challenge():
+def run_daily_challenge(vol=None):
+    global modal_volume
+    modal_volume = vol
     client.run(DISCORD_TOKEN)
 
 # run_daily_challenge()
