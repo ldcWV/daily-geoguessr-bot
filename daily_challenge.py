@@ -88,6 +88,7 @@ async def on_ready():
                 color=7076607
             )
 
+            modal_volume.reload()
             fname = f"/root/geopoints/{CHANNEL_ID}.json"
             points_dict = {}
             if os.path.exists(fname):
