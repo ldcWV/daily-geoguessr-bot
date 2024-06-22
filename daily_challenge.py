@@ -45,6 +45,7 @@ async def on_ready():
             assistant = openai_client.beta.assistants.retrieve(ASSISTANT_ID)
             thread = openai_client.beta.threads.retrieve(THREAD_ID)
 
+            print("Sending the following to ChatGPT: " + json.dumps(results))
             openai_client.beta.threads.messages.create(
                 thread_id=thread.id,
                 role="user",
