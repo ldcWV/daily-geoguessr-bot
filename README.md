@@ -37,9 +37,14 @@ Upon running a single command, the script gets deployed automatically as a [Moda
 
 ## Usage
 
-```bash
-modal deploy --name geoguessr_bot ./run.py
-```
+- To run once:
+    ```bash
+    modal run ./run.py::run
+    ```
+- To deploy (runs every day at 9pm EST):
+    ```bash
+    modal deploy --name geoguessr_bot ./run.py
+    ```
 
 ## Contributing
 
